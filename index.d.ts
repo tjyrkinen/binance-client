@@ -1,7 +1,7 @@
 // tslint:disable:interface-name
 import { Agent } from 'http';
 declare module 'binance-client' {
-    export default function (options?: { apiKey: string; apiSecret: string, getTime?: () => number | Promise<number> }): Binance;
+    export default function (options?: { httpBase?: string, httpFutureBase?: string, apiKey: string; apiSecret: string, getTime?: () => number | Promise<number> }): Binance;
 
     export enum ErrorCodes {
         UNKNOWN = -1000,
@@ -95,7 +95,7 @@ declare module 'binance-client' {
         quoteQty: string,
         time: number,
         isBuyerMaker: boolean
-    } 
+    }
 
     export interface FMarkPrice {
         symbol: string,
@@ -129,7 +129,7 @@ declare module 'binance-client' {
         closeTime: number,
         firstId: number,   // First tradeId
         lastId: number,    // Last tradeId
-        count: number 
+        count: number
     }
 
     interface FPrice {
@@ -160,11 +160,11 @@ declare module 'binance-client' {
         origQty: string, // ORDER_AMOUNT
         executedQty: string, // FILLED_AMOUNT
         averagePrice: string, // AVG_PRICE
-        status: FOrderStatus,                 
-        timeInForce: FTimeInForce,               
+        status: FOrderStatus,
+        timeInForce: FTimeInForce,
         type: FOrderType,
         side: FOrderSide,
-        time: number 
+        time: number
     }
 
     interface FOpenInterest {
@@ -181,7 +181,7 @@ declare module 'binance-client' {
         bracket: number,
         initialLeverage: number,  // Max initial leverage for this bracket
         notionalCap: number,  // Cap notional of this bracket
-        notionalFloor: number,  // Notionl threshold of this bracket 
+        notionalFloor: number,  // Notionl threshold of this bracket
         maintMarginRatio: number // Maintenance ratio for this bracket
     }
 
@@ -295,7 +295,7 @@ declare module 'binance-client' {
         eventType: 'MARGIN_CALL',
         eventTime: number,
         crossWalletBalance: string,
-        positions: FWSUserMarginCallEventPosition[] 
+        positions: FWSUserMarginCallEventPosition[]
     }
 
     export type FSWUserAccountUpdateEventReasonType =
@@ -344,9 +344,9 @@ declare module 'binance-client' {
         eventType: 'ORDER_TRADE_UPDATE',
         eventTime: number,
         transactTime: number,
-        order: FWSOrderUpdateOrder 
+        order: FWSOrderUpdateOrder
     }
-    
+
     export interface FWSOrderUpdateOrder {
         symbol: string,
         clientOrderId: string,
@@ -532,7 +532,7 @@ declare module 'binance-client' {
         | 'SECOND'
         | 'MINUTE'
         | 'DAY';
-    
+
     export type FRateLimitInterval = RateLimitInterval;
 
     export interface ExchangeInfoRateLimit {
@@ -845,7 +845,7 @@ declare module 'binance-client' {
         isolated: boolean,
         entryPrice: string,
         maxNational: string,
-        positionSide: FPositionSide 
+        positionSide: FPositionSide
     }
 
     export type FPositionSide = 'BOTH'
@@ -884,9 +884,9 @@ declare module 'binance-client' {
 
     export interface FPositionRisk {
         entryPrice: string,
-        marginType: string,       
-        isAutoAddMargin: string,     
-        isolatedMargin: string, 
+        marginType: string,
+        isAutoAddMargin: string,
+        isolatedMargin: string,
         leverage: string,         // current initial leverage
         liquidationPrice: string,
         markPrice: string,
@@ -1094,7 +1094,7 @@ declare module 'binance-client' {
         priceChangePercent: string;
         weightedAvgPrice: string;
         lastPrice: string,
-        lastQuantity: string,    
+        lastQuantity: string,
         open: string;
         high: string;
         low: string;
@@ -1105,7 +1105,7 @@ declare module 'binance-client' {
         firstTradeId: number;
         lastTradeId: number;
         totalTrades: number;
-    }  
+    }
 
     interface FWsMiniTicker {
         eventType: number,
@@ -1230,7 +1230,7 @@ declare module 'binance-client' {
         isBestMatch: boolean;
     }
 
-    
+
 
     interface MyTrade {
         id: number;

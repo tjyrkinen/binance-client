@@ -100,7 +100,7 @@ const publicCall = ({ base, apiPathBase }) => ({
  * @param {string} path Endpoint path
  * @param {object} data The payload to be sent
  * @param {string} method HTTB VERB, GET by default
- * @param {http.Agent} object http Agent object (can be used to setup proxy use) 
+ * @param {http.Agent} object http Agent object (can be used to setup proxy use)
  * @returns {object} The api response
  */
 const keyCall = ({ apiKey, pubCall }) => ({
@@ -148,7 +148,7 @@ const privateCall = ({ apiKey, apiSecret, base, apiPathBase, getTime = defaultGe
   return (data && data.useServerTime
     ? pubCall({ path: '/v1/time', agent }).then(r => r.serverTime)
     : Promise.resolve(getTime())
-  ).then(timestamp => {
+  ).then((timestamp) => {
     if (data) {
       delete data.useServerTime
     }
@@ -159,20 +159,31 @@ const privateCall = ({ apiKey, apiSecret, base, apiPathBase, getTime = defaultGe
       .digest('hex')
 
     const newData = noExtra ? data : { ...data, timestamp, signature }
+    return sendResult(fetch(
+      `${base}${(path.includes('/wapi') || path.includes('/sapi')) ? '' : `/${apiPathBase}`}${path}${noData
+        ? ''
+        : makeQueryString(newData)}`,
+      {
+        method,
+        headers: { 'X-MBX-APIKEY': apiKey },
+        json: true,
+        agent
+      },
+    ).then((result) => result.json().then((json) => {
+      if (process.env.DEBUG_BINANCE_CLIENT) {
+        result.headers.forEach((v, k) => {
+          if (k.startsWith('x-mbx')) {
+            console.log(`Binance result header for api key ${apiKey} at route ${path}: ${k} = ${v}`);
+          }
+        })
+      }
 
-    return sendResult(
-      fetch(
-        `${base}${(path.includes('/wapi') || path.includes('/sapi')) ? '' : `/${apiPathBase}`}${path}${noData
-          ? ''
-          : makeQueryString(newData)}`,
-        {
-          method,
-          headers: { 'X-MBX-APIKEY': apiKey },
-          json: true,
-          agent
-        },
-      ),
-    )
+      return {
+        ...result,
+        json: () => json,
+      };
+    })));
+
   })
 }
 
@@ -377,13 +388,13 @@ export default opts => {
     futuresBookTicker: (payload, agent) =>
       futuresPubCall({path: '/v1/ticker/bookTicker', data: payload, agent }).then(r =>
         (
-          payload.reduce && Array.isArray(r) && 
+          payload.reduce && Array.isArray(r) &&
           r.reduce((out, cur) => ((out[cur.symbol] = cur), out), {})
         ) || r // TODO: docs
       ),
     futuresAllForceOrders: (payload, agent) => futuresPubCall({path: '/v1/allForceOrders', data: payload, agent }),
     futuresOpenInterest: (payload, agent) => checkParams('futuresOpenInterest', payload, ['symbol']) && futuresPubCall({path: '/v1/openInterest', data: payload, agent }),
-    futuresLeverageBracket: (payload, agent) => futuresPubCall({path: '/v1/leverageBracket', data: payload, agent }).then(r => 
+    futuresLeverageBracket: (payload, agent) => futuresPubCall({path: '/v1/leverageBracket', data: payload, agent }).then(r =>
         Array.isArray(r) ?
           (
             (payload.reduce && r.reduce((out, cur) => ((out[cur.symbol] = cur.brackets), out), {}) || r)
