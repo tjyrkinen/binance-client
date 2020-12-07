@@ -24,14 +24,25 @@ const makeQueryString = q =>
 /**
  * Finalize API response
  */
-const sendResult = call =>
+const sendResult = (call, {apiKey, path} = {}) =>
   call.then(res => {
+    if (process.env.DEBUG_BINANCE_CLIENT) {
+      res.headers.forEach(function (v, k) {
+        if (k.startsWith('x-mbx')) {
+          console.log('Binance result header for api key ' + apiKey + ' at route ' + path + ': ' + k + ' = ' + v);
+        }
+      });
+    }
+
     // If response is ok, we can safely assume it is valid JSON
     // TODO: add headers easy access
     if (res.ok) {
       return res.json()
     }
 
+    if (typeof res.text !== 'function') {
+      console.log('res.text not function', res);
+    }
     // Errors might come from the API itself or the proxy Binance is using.
     // For API errors the response will be valid JSON,but for proxy errors
     // it will be HTML
@@ -91,7 +102,7 @@ const publicCall = ({ base, apiPathBase }) => ({
       json: true,
       headers,
       agent
-    }),
+    }, {path}),
   )
 
 /**
@@ -169,20 +180,7 @@ const privateCall = ({ apiKey, apiSecret, base, apiPathBase, getTime = defaultGe
         json: true,
         agent
       },
-    ).then((result) => result.json().then((json) => {
-      if (process.env.DEBUG_BINANCE_CLIENT) {
-        result.headers.forEach((v, k) => {
-          if (k.startsWith('x-mbx')) {
-            console.log(`Binance result header for api key ${apiKey} at route ${path}: ${k} = ${v}`);
-          }
-        })
-      }
-
-      return {
-        ...result,
-        json: () => json,
-      };
-    })));
+    ), {apiKey, path});
 
   })
 }

@@ -438,7 +438,7 @@ declare module 'binance-client' {
         futuresCancelAllOpenOrders: (payload: { symbol: string, recvWindow?: number }, agent?: Agent) => Promise<FCancelAllOrderResp>;
         futuresCancelMultipleOrders: (payload: { symbol: string, orderIdList?: number[], origClientOrderIdList?: number[], recvWindow?: number }, agent?: Agent) => Promise<(FOrder | FCancelAllOrderResp)[]>;
         futuresGetOpenOrder: (payload: { symbol: string, orderId?: number, origClientOrderId?: string, recvWindow?: number}, agent?: Agent) => Promise<FOrderState>;
-        futuresGetAllOpenOrders: (payload: { symbol: string, recvWindow?: number }, agent?: Agent) => Promise<FOrderState[]>;
+        futuresGetAllOpenOrders: (payload: { symbol?: string, recvWindow?: number }, agent?: Agent) => Promise<FOrderState[]>;
         futuresGetAllOrders: (payload: { symbol: string, orderId?: number, startTime?: number, endTime?: number, limit?: number, recvWindow?: number }, agent?: Agent) => Promise<FOrderState[]>;
         futuresAccountBalance: (payload: { recvWindow?: number }, agent?: Agent) => Promise<FAccountBalance[]>;
         futuresAccountInfo: (payload: { recvWindow?: number }, agent?: Agent) => Promise<FAccountInfo>;
@@ -845,7 +845,8 @@ declare module 'binance-client' {
         isolated: boolean,
         entryPrice: string,
         maxNational: string,
-        positionSide: FPositionSide
+        positionSide: FPositionSide,
+        positionAmt: string,
     }
 
     export type FPositionSide = 'BOTH'
