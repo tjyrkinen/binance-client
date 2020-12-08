@@ -28,7 +28,7 @@ const multiStreams = (symbolMethodObjects, cb) => {
     subscribe(symbolMethodObjects) {
       if (!Array.isArray(symbolMethodObjects)) {
         symbolMethodObjects = [symbolMethodObjects];
-      } 
+      }
     },
     unsubscribe(symbolMethodObjects) {
       if (!Array.isArray(symbolMethodObjects)) {
@@ -135,7 +135,7 @@ const markPriceAll = (payload, cb) => {
           reducedData[d.symbol] = d;
           return reducedData;
         },
-        {} 
+        {}
       );
 
       return cb(reducedData, data);
@@ -331,8 +331,7 @@ const allBookTicker = cb => {
 
   w.onmessage = msg => {
     cb(
-      JSON.parse(msg.data)
-        .map(d => bookTickerTransform(d))
+      bookTickerTransform(JSON.parse(msg.data))
     );
   }
 
@@ -347,7 +346,10 @@ const bookTickerTransform = d => ({
   bestBidPrice: d.b,
   bestBidQty: d.B,
   bestAskPrice: d.a,
-  bestAskQty: d.A
+  bestAskQty: d.A,
+  symbol: d.s,
+  eventTime: d.E,
+  transactionTime: d.T,
 })
 
 // ______________________________ liquidation order
@@ -568,7 +570,7 @@ const userTransforms = {
         isMaker: o.m,
         isReduceOnly: o.R,
         stopPriceType: o.wt
-      } 
+      }
     }
   }
 }

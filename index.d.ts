@@ -483,7 +483,7 @@ declare module 'binance-client' {
         allMiniTickers: (callback: (miniTickers: FWsMiniTicker[]) => void) => FStreamReturnObj;
         allTickers: (callback: (tickers: FWsTicker[]) => void) => FStreamReturnObj;
         bookTicker: (symbol: string, callback: (bookTicker: FWsBookTicker) => void) => FStreamReturnObj;
-        allBookTicker: (callback: (bookTickers: FWsBookTicker[]) => void) => FStreamReturnObj;
+        allBookTicker: (callback: (bookTicker: FWsBookTicker) => void) => FStreamReturnObj;
         liquidationOrder: (symbol: string, callback: (liquidationOrder: FWsLiquidationOrder) => void) => FStreamReturnObj;
         allLiquidationOrder: (callback: (liquidationOrders: FWsLiquidationOrder[]) => void) => FStreamReturnObj;
         user: (callback: (msg: FWSUserOrderUpdateData | FWSUserAccountUpdateData | FWSUserMarginCallEventData | { eventType: string, [prop: string]: any }) => void) => Promise<FStreamReturnObj>;
@@ -592,21 +592,21 @@ declare module 'binance-client' {
         | 'MAX_ALGO_ORDERS';
 
     export interface SymbolPriceFilter {
-        filterType: SymbolFilterType,
+        filterType: Extract<FFilterType, 'PRICE_FILTER'>,
         minPrice: string;
         maxPrice: string;
         tickSize: string;
     }
 
     export interface SymbolPercentPriceFilter {
-        filterType: SymbolFilterType,
+        filterType: Extract<FFilterType, 'PERCENT_PRICE'>,
         multiplierDown: string;
         multiplierUp: string;
         avgPriceMins: number;
     }
 
     export interface SymbolLotSizeFilter {
-        filterType: SymbolFilterType,
+        filterType: Extract<FFilterType, 'LOT_SIZE' | 'MARKET_LOT_SIZE'>,
         minQty: string;
         maxQty: string;
         stepSize: string;
@@ -615,17 +615,17 @@ declare module 'binance-client' {
     export interface SymbolMinNotionalFilter {
         applyToMarket: boolean;
         avgPriceMins: number;
-        filterType: SymbolFilterType;
+        filterType: Extract<FFilterType, 'MIN_NOTIONAL'>,
         minNotional: string;
     }
 
     export interface SymbolMaxNumOrdersFilter {
-        filterType: SymbolFilterType;
+        filterType: Extract<FFilterType, 'MAX_NUM_ORDERS'>,
         limit: number;
     }
 
     export interface SymbolMaxAlgoOrdersFilter {
-        filterType: SymbolFilterType;
+        filterType: Extract<FFilterType, 'MAX_ALGO_ORDERS'>,
         limit: number;
     }
 
@@ -652,15 +652,18 @@ declare module 'binance-client' {
     }
 
     export interface FSymbol {
-        filters: FSymbolFilter,
+        filters: FSymbolFilter[],
         maintMarginPercent: string,
         pricePrecision: number,
         quantityPrecision: number,
         requiredMarginPercent: string,
-        status: string,
+        status: 'TRADING',
         OrderType: FOrderType,
         symbol: string,
-        timeInForce: FTimeInForce
+        timeInForce: FTimeInForce,
+        baseAsset: string,
+        quoteAsset: string,
+        marginAsset: string,
     }
 
     export interface ExchangeInfo {
@@ -1126,6 +1129,9 @@ declare module 'binance-client' {
         bestBidQty: string,
         bestAskPrice: string,
         bestAskQty: string
+        symbol: string,
+        eventTime: number,
+        transactionTime: number,
     }
 
     interface Candle {

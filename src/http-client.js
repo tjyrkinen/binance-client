@@ -61,6 +61,9 @@ const sendResult = (call, {apiKey, path} = {}) =>
       }
       throw error
     })
+  }).catch((err) => {
+    console.error(`Unexpected error in binance http client at ${path}`, err);
+    throw err;
   })
 
 /**
@@ -169,7 +172,9 @@ const privateCall = ({ apiKey, apiSecret, base, apiPathBase, getTime = defaultGe
       .update(makeQueryString({ ...data, timestamp }).substr(1))
       .digest('hex')
 
+
     const newData = noExtra ? data : { ...data, timestamp, signature }
+
     return sendResult(fetch(
       `${base}${(path.includes('/wapi') || path.includes('/sapi')) ? '' : `/${apiPathBase}`}${path}${noData
         ? ''
@@ -273,13 +278,11 @@ const futuresOrder = (privCall, payload = {}, url, agent) => {
     (['LIMIT', 'STOP', 'TAKE_PROFIT'].includes(payload.type) || !payload.type) // TODO: TO CHECK
       ? { timeInForce: 'GTC', ...payload }
       : payload
-
   if (!payload.type) payload.type = 'LIMIT';
 
   if (payload.type && payload.type === 'MARKET' && payload.timeInForce) {
     throw new Error('timeInForce parameter cannot be send with type MARKET');
   }
-
   return (
     checkParams('futuresOrder', newPayload, [
       'symbol',
@@ -290,8 +293,7 @@ const futuresOrder = (privCall, payload = {}, url, agent) => {
       ...((payload.type && ['STOP', 'TAKE_PROFIT'].includes(payload.type) && ['price', 'stopPrice']) || []),
       ...((payload.type && ['STOP_MARKET', 'TAKE_PROFIT_MARKET'].includes(payload.type) && ['stopPrice']) || []),
     ]) &&
-    privCall({ path: url, data: newPayload, method: 'POST', agent })
-  )
+    privCall({ path: url, data: newPayload, method: 'POST', agent }));
 }
 const futuresBook = book;
 const futuresAggTrades = aggTrades;
