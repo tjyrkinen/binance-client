@@ -376,7 +376,27 @@ declare module 'binance-client' {
 
 
 
+    export enum FuturesApiReferralType {
+        USDT = 1,
+        Coin = 2,
+    }
 
+    export interface FuturesApiReferralResponse {
+        brokerId: string;
+        rebateWorking: boolean;
+        ifNewUser: boolean;
+    }
+
+    export interface FuturesApiReferralOverviewResponse {
+        brokerId: string; // "ABCD1234",
+        newTraderRebateCommission: string; // "0.30000000",
+        oldTraderRebateCommission: string; // "0.20000000",
+        totalTradeUser: number; // 13,
+        unit: string; // "USDT",
+        totalTradeVol: string; // "405.54379000",
+        totalRebateVol: string; // "0.01833800",
+        time: number; //1597708800000
+     }
 
     export interface Binance {
         // ________________________________________ Binance
@@ -442,6 +462,8 @@ declare module 'binance-client' {
         futuresGetAllOrders: (payload: { symbol: string, orderId?: number, startTime?: number, endTime?: number, limit?: number, recvWindow?: number }, agent?: Agent) => Promise<FOrderState[]>;
         futuresAccountBalance: (payload: { recvWindow?: number }, agent?: Agent) => Promise<FAccountBalance[]>;
         futuresAccountInfo: (payload: { recvWindow?: number }, agent?: Agent) => Promise<FAccountInfo>;
+        futuresApiReferralIfNewUser: (payload: { recvWindow?: number, brokerId: string, type?: FuturesApiReferralType }, agent?: Agent) => Promise<FuturesApiReferralResponse>;
+        futuresApiReferralOverview: (payload: { recvWindow?: number }, agent?: Agent) => Promise<FuturesApiReferralOverviewResponse>;
         futuresChangeLeverage: (payload: { symbol: string, leverage: number, recvWindow?: number }, agent?: Agent) => Promise<FLeverageChangeResp>;
         futuresChangeMarginType: (payload: { symbol: string, marginType: FMarginType, recvWindow?: number }, agent?: Agent) => Promise<CodeMsgResp>;
         futuresModifyPositionMargin: (payload: { symbol: string, amount: number, type: number, recvWindow?: number }, agent?: Agent) => Promise<FModifyPositionMarginResp>;
