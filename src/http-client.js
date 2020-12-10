@@ -11,6 +11,7 @@ const FUTURES_API_PATH_BASE = 'fapi';
 
 const defaultGetTime = () => Date.now()
 
+const unlossless = (v) => typeof v === 'object' && v.type === 'LosslessNumber' ? LosslessJSON.stringify(v) : v;
 /**
  * Build query string for uri encoded url based on json object
  */
@@ -19,8 +20,8 @@ const makeQueryString = q =>
     ? `?${Object.keys(q)
         .filter(k => !!q[k])
         .map(k => {
-          const v = Array.isArray(q[k]) ? `[${q[k].join(',')}]` : q[k];
-          return `${encodeURIComponent(k)}=${encodeURIComponent(LosslessJSON.stringify(v))}`
+          const v = Array.isArray(q[k]) ? `[${q[k].map(unlossless).join(',')}]` : q[k];
+          return `${encodeURIComponent(k)}=${encodeURIComponent(unlossless(v))}`
         } )
         .join('&')}`
     : ''
@@ -54,6 +55,11 @@ const sendResult = (call, {apiKey, path} = {}) =>
       let error;
       try {
         const json = LosslessJSON.parse(text)
+
+        if (res.ok) {
+          return json;
+        }
+
         // The body was JSON parsable, assume it is an API response error
         error = new Error(json.msg || `${res.status} ${res.statusText}`)
         error.code = json.code
