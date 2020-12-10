@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 import zip from 'lodash.zipobject'
-import LosslessJSON from 'lossless-json';
+import * as LosslessJSON from 'lossless-json';
 
 import 'isomorphic-fetch'
 

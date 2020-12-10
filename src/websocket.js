@@ -2,7 +2,7 @@ import zip from 'lodash.zipobject'
 
 import httpMethods from 'http-client'
 import openWebSocket from 'open-websocket'
-import LosslessJSON from 'lossless-json';
+import * as LosslessJSON from 'lossless-json';
 
 const BASE = 'wss://stream.binance.com:9443/ws'
 
