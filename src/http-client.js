@@ -17,7 +17,10 @@ const makeQueryString = q =>
   q
     ? `?${Object.keys(q)
         .filter(k => !!q[k])
-        .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(q[k])}`)
+        .map(k => {
+          const v = Array.isArray(q[k]) ? `[${q[k].join(',')}]` : q[k];
+          return `${encodeURIComponent(k)}=${encodeURIComponent(v)}`
+        } )
         .join('&')}`
     : ''
 
@@ -409,7 +412,7 @@ export default opts => {
     futuresGetOrder: (payload, agent) => checkParams('futuresQueryOrder', payload, ['symbol']) && futuresPrivCall({ path: '/v1/order', data: payload, agent }),
     futuresCancelOrder: (payload, agent) => checkParams('futuresCancelOrder', payload, ['symbol']) && futuresPrivCall({ path: '/v1/order', data: payload, method: 'DELETE', agent }),
     futuresCancelAllOpenOrders: (payload, agent) => checkParams('futuresCancelOrder', payload, ['symbol']) && futuresPrivCall({ path: '/v1/allOpenOrders', data: payload, method: 'DELETE', agent }),
-    futuresCancelMultipleOrders: (payload, agent) => checkParams('futuresCancelMultipleOrders', payload, ['symbol']) && futuresPrivCall({ path: '/v1/batchOrders', data: payload, agent }),
+    futuresCancelMultipleOrders: (payload, agent) => checkParams('futuresCancelMultipleOrders', payload, ['symbol']) && futuresPrivCall({ path: '/v1/batchOrders', data: payload, method: 'DELETE', agent }),
     futuresGetOpenOrder: (payload, agent) => checkParams('futuresGetOpenOrder', payload, ['symbol']) && futuresPrivCall({ path: '/v1/openOrder', data: payload, agent }),
     futuresGetAllOpenOrders: (payload, agent) => futuresPrivCall({ path: '/v1/openOrders', data: payload, agent }),
     futuresGetAllOrders: (payload, agent) => checkParams('futuresGetAllOrders', payload, ['symbol']) && futuresPrivCall({ path: '/v1/allOrders', data: payload, agent }),
