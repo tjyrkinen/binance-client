@@ -1,5 +1,6 @@
 import crypto from 'crypto'
 import zip from 'lodash.zipobject'
+import LosslessJSON from 'lossless-json';
 
 import 'isomorphic-fetch'
 
@@ -19,7 +20,7 @@ const makeQueryString = q =>
         .filter(k => !!q[k])
         .map(k => {
           const v = Array.isArray(q[k]) ? `[${q[k].join(',')}]` : q[k];
-          return `${encodeURIComponent(k)}=${encodeURIComponent(v)}`
+          return `${encodeURIComponent(k)}=${encodeURIComponent(LosslessJSON.stringify(v))}`
         } )
         .join('&')}`
     : ''
@@ -38,10 +39,10 @@ const sendResult = (call, {apiKey, path} = {}) =>
     }
 
     // If response is ok, we can safely assume it is valid JSON
-    // TODO: add headers easy access
-    if (res.ok) {
-      return res.json()
-    }
+    // No. Binance api sometimes sends numbers too big to be represented as javascript numbers. We need to give special care to parsing the id numbers.
+    // if (res.ok) {
+    //   return res.json()
+    // }
 
     if (typeof res.text !== 'function') {
       console.log('res.text not function', res);
@@ -52,7 +53,7 @@ const sendResult = (call, {apiKey, path} = {}) =>
     return res.text().then(text => {
       let error;
       try {
-        const json = JSON.parse(text)
+        const json = LosslessJSON.parse(text)
         // The body was JSON parsable, assume it is an API response error
         error = new Error(json.msg || `${res.status} ${res.statusText}`)
         error.code = json.code

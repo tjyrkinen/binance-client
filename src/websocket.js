@@ -2,6 +2,7 @@ import zip from 'lodash.zipobject'
 
 import httpMethods from 'http-client'
 import openWebSocket from 'open-websocket'
+import LosslessJSON from 'lossless-json';
 
 const BASE = 'wss://stream.binance.com:9443/ws'
 
@@ -17,7 +18,7 @@ const depth = (payload, cb) => {
         u: finalUpdateId,
         b: bidDepth,
         a: askDepth,
-      } = JSON.parse(msg.data)
+      } = LosslessJSON.parse(msg.data)
 
       cb({
         eventType,
@@ -34,7 +35,7 @@ const depth = (payload, cb) => {
   })
 
   return {
-    closeStream: options => 
+    closeStream: options =>
     cache.forEach(w => w.close(1000, 'Close handle was called', { keepClosed: true, ...options })),
     ws: cache
   }
@@ -44,7 +45,7 @@ const partialDepth = (payload, cb) => {
   const cache = (Array.isArray(payload) ? payload : [payload]).map(({ symbol, level }) => {
     const w = openWebSocket(`${BASE}/${symbol.toLowerCase()}@depth${level}`)
     w.onmessage = msg => {
-      const { lastUpdateId, bids, asks } = JSON.parse(msg.data)
+      const { lastUpdateId, bids, asks } = LosslessJSON.parse(msg.data)
       cb({
         symbol,
         level,
@@ -72,7 +73,7 @@ const candles = (payload, interval, cb) => {
   const cache = (Array.isArray(payload) ? payload : [payload]).map(symbol => {
     const w = openWebSocket(`${BASE}/${symbol.toLowerCase()}@kline_${interval}`)
     w.onmessage = msg => {
-      const { e: eventType, E: eventTime, s: symbol, k: tick } = JSON.parse(msg.data)
+      const { e: eventType, E: eventTime, s: symbol, k: tick } = LosslessJSON.parse(msg.data)
       const {
         t: startTime,
         T: closeTime,
@@ -154,7 +155,7 @@ const ticker = (payload, cb) => {
     const w = openWebSocket(`${BASE}/${symbol.toLowerCase()}@ticker`)
 
     w.onmessage = msg => {
-      cb(tickerTransform(JSON.parse(msg.data)))
+      cb(tickerTransform(LosslessJSON.parse(msg.data)))
     }
 
     return w
@@ -171,7 +172,7 @@ const allTickers = cb => {
   const w = new openWebSocket(`${BASE}/!ticker@arr`)
 
   w.onmessage = msg => {
-    const arr = JSON.parse(msg.data)
+    const arr = LosslessJSON.parse(msg.data)
     cb(arr.map(m => tickerTransform(m)))
   }
 
@@ -185,7 +186,7 @@ const tradesInternal = (payload, streamName, outputMap, cb) => {
   const cache = (Array.isArray(payload) ? payload : [payload]).map(symbol => {
     const w = openWebSocket(`${BASE}/${symbol.toLowerCase()}@${streamName}`)
     w.onmessage = msg => {
-      cb(outputMap(JSON.parse(msg.data)))
+      cb(outputMap(LosslessJSON.parse(msg.data)))
     }
 
     return w
@@ -278,7 +279,7 @@ const userTransforms = {
 }
 
 export const userEventHandler = cb => msg => {
-  const { e: type, ...rest } = JSON.parse(msg.data)
+  const { e: type, ...rest } = LosslessJSON.parse(msg.data)
   cb(userTransforms[type] ? userTransforms[type](rest) : { type, ...rest })
 }
 
@@ -335,7 +336,7 @@ const user = opts => cb => {
         resolve({
           closeStream: options => closeStream(options),
           ws: w
-        })      
+        })
       })
       .catch(err => {
         if (isReconnecting) {

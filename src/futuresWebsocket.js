@@ -2,6 +2,7 @@ import zip from 'lodash.zipobject'
 
 import httpMethods from 'http-client'
 import openWebSocket from 'open-websocket'
+import LosslessJSON from 'lossless-json';
 
 const BASE = 'wss://fstream.binance.com'
 
@@ -18,7 +19,7 @@ const multiStreams = (symbolMethodObjects, cb) => {
 
   const ws = openWebSocket(`${BASE}/stream?streams=${streamsNamesPath}`);
   ws.onmessage = msg => {
-    const data = JSON.parse(msg);
+    const data = LosslessJSON.parse(msg);
     cb(data);
     // TODO:
   }
@@ -73,7 +74,7 @@ const trades = (symbol, cb) => tradesInternal(symbol, 'trade', tradesOutputMappi
 const tradesInternal = (symbol, streamName, outputMap, cb) => {
   const w = openWebSocket(`${BASE}/ws/${symbol.toLowerCase()}@${streamName}`)
   w.onmessage = msg => {
-    cb(outputMap(JSON.parse(msg.data)))
+    cb(outputMap(LosslessJSON.parse(msg.data)))
   }
 
   return {
@@ -95,7 +96,7 @@ const markPrice = (payload, cb) => {
       p: markPrice,
       r: fundingRate,
       T: nextFundingTime
-    } = JSON.parse(msg.data);
+    } = LosslessJSON.parse(msg.data);
 
     cb({
       eventType,
@@ -119,7 +120,7 @@ const markPriceAll = (payload, cb) => {
   const w = openWebSocket(`${BASE}/ws/!markPrice@arr${speed ? `@${speed}` : ''}`);
 
   w.onmessage = msg => {
-    const data = JSON.parse(msg.data)
+    const data = LosslessJSON.parse(msg.data)
       .map(d => ({
         eventType: d.e,
         eventTime: d.E,
@@ -159,7 +160,7 @@ const candles = (symbol, interval, cb) => {
   const w = openWebSocket(`${BASE}/ws/${symbol.toLowerCase()}@kline_${interval}`)
 
   w.onmessage = msg => {
-    const { e: eventType, E: eventTime, s: symbol, k: tick } = JSON.parse(msg.data)
+    const { e: eventType, E: eventTime, s: symbol, k: tick } = LosslessJSON.parse(msg.data)
     const {
       t: startTime,
       T: closeTime,
@@ -213,7 +214,7 @@ const miniTicker = (symbol, cb) => {
   const w = openWebSocket(`${BASE}/ws/${symbol.toLowerCase()}@miniTicker`)
 
   w.onmessage = msg => {
-    cb(miniTickerTransform(JSON.parse(msg.data)))
+    cb(miniTickerTransform(LosslessJSON.parse(msg.data)))
   }
 
   return {
@@ -228,7 +229,7 @@ const allMiniTickers = (cb) => {
 
   w.onmessage = msg => {
     cb(
-      JSON.parse(msg.data)
+      LosslessJSON.parse(msg.data)
         .map(d => miniTickerTransform(d))
     );
   }
@@ -256,7 +257,7 @@ const ticker = (symbol, cb) => {
   const w = openWebSocket(`${BASE}/ws/${symbol.toLowerCase()}@ticker`)
 
   w.onmessage = msg => {
-    cb(tickerTransform(JSON.parse(msg.data)))
+    cb(tickerTransform(LosslessJSON.parse(msg.data)))
   }
 
   return {
@@ -270,7 +271,7 @@ const allTickers = cb => {
 
   w.onmessage = msg => {
     cb(
-      JSON.parse(msg.data)
+      LosslessJSON.parse(msg.data)
         .map(m => tickerTransform(m))
     )
   }
@@ -315,7 +316,7 @@ const bookTicker = (symbol, cb) => {
   w.onmessage = msg => {
     cb(
       bookTickerTransform(
-        JSON.parse(msg.data)
+        LosslessJSON.parse(msg.data)
       )
     );
   }
@@ -331,7 +332,7 @@ const allBookTicker = cb => {
 
   w.onmessage = msg => {
     cb(
-      bookTickerTransform(JSON.parse(msg.data))
+      bookTickerTransform(LosslessJSON.parse(msg.data))
     );
   }
 
@@ -358,7 +359,7 @@ const liquidationOrder = (symbol, cb) => {
 
   w.onmessage = msg => {
     cb(liquidationOrderTransform(
-      JSON.parse(msg.data)
+      LosslessJSON.parse(msg.data)
     ));
   }
 
@@ -373,7 +374,7 @@ const allLiquidationOrder = cb => {
 
   w.onmessage = msg => {
     cb(
-      JSON.parse(msg.data)
+      LosslessJSON.parse(msg.data)
         .map(d => liquidationOrderTransform(d))
     );
   }
@@ -428,7 +429,7 @@ const partialDepth = (payload, cb) => {
       pu: lastUpdateIdInLastStream,
       b: bidDepth,
       a: askDepth,
-    } = JSON.parse(msg.data)
+    } = LosslessJSON.parse(msg.data)
 
     cb({
       eventType,
@@ -471,7 +472,7 @@ const depth = (payload, cb) => {
       pu: lastUpdateIdInLastStream,
       b: bidDepth,
       a: askDepth,
-    } = JSON.parse(msg.data)
+    } = LosslessJSON.parse(msg.data)
 
     cb({
       eventType,
@@ -576,7 +577,7 @@ const userTransforms = {
 }
 
 export const userEventHandler = cb => msg => {
-  const { e: eventType, ...rest } = JSON.parse(msg.data)
+  const { e: eventType, ...rest } = LosslessJSON.parse(msg.data)
   cb(userTransforms[eventType] ? userTransforms[eventType](rest) : { eventType, ...rest })
 }
 
@@ -598,7 +599,7 @@ const user = opts => cb => {
   let w = null
 
   const handleEvent = msg => {
-    const { e: type, ...rest } = JSON.parse(msg.data)
+    const { e: type, ...rest } = LosslessJSON.parse(msg.data)
     if (type === 'listenKeyExpired') {
       keepAlive(false);
       return;
