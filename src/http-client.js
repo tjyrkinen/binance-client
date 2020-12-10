@@ -72,7 +72,7 @@ const sendResult = (call, {apiKey, path} = {}) =>
       throw error
     })
   }).catch((err) => {
-    console.error(`Unexpected error in binance http client at ${path}`, err);
+    console.log(`Unexpected error in binance http client at ${path}, ${LosslessJSON.stringify(err.code)}`, err.message);
     throw err;
   })
 
