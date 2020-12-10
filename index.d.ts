@@ -419,7 +419,7 @@ declare module 'binance-client' {
         getOrder(options: { symbol: string, orderId: number, origClientOrderId?: string, recvWindow?: number, useServerTime?: boolean }, agent?: Agent): Promise<QueryOrderResult>;
         cancelOrder(options: { symbol: string; orderId: number, origClientOrderId?: string, newClientOrderId?: string, recvWindow?: number, useServerTime?: boolean }, agent?: Agent): Promise<CancelOrderResult>;
         openOrders(options: { symbol?: string, recvWindow?: number, useServerTime?: boolean }, agent?: Agent): Promise<QueryOrderResult[]>;
-        allOrders(options: { symbol?: string, orderId?: number, limit?: number, recvWindow?: number, useServerTime?: boolean }, agent?: Agent): Promise<QueryOrderResult[]>;
+        allOrders(options: { symbol?: string, orderId?: string, limit?: number, recvWindow?: number, useServerTime?: boolean }, agent?: Agent): Promise<QueryOrderResult[]>;
         dailyStats(options?: { symbol: string }, agent?: Agent): Promise<DailyStatsResult | DailyStatsResult[]>;
         candles(options: CandlesOptions, agent?: Agent): Promise<CandleChartResult[]>;
         tradesHistory(options: { symbol: string, limit?: number, fromId?: number }, agent?: Agent): Promise<Trade[]>;
@@ -453,13 +453,13 @@ declare module 'binance-client' {
         futuresAccountTransactionHistory: (payload: { asset: string, startTime: number, endTime?: number, current?: number, size?: number, recvWindow?: number }, agent?: Agent) => Promise<FAccountTransferHistory>;
         futuresOrder: (payload: FNewOrder, agent?: Agent) => Promise<FOrder>;
         futuresOrderTest: (payload: { symbol?: string }, agent?: Agent) => Promise<FMarkPrice>;
-        futuresGetOrder: (payload: { symbol: string, orderId?: number, origClientOrderId?: string, recvWindow?: number }, agent?: Agent) => Promise<FOrderState>;
-        futuresCancelOrder: (payload: { symbol: string, orderId?: number, origClientOrderId?: string, recvWindow?: number }, agent?: Agent) => Promise<FOrder>;
+        futuresGetOrder: (payload: { symbol: string, orderId?: string, origClientOrderId?: string, recvWindow?: number }, agent?: Agent) => Promise<FOrderState>;
+        futuresCancelOrder: (payload: { symbol: string, orderId?: string, origClientOrderId?: string, recvWindow?: number }, agent?: Agent) => Promise<FOrder>;
         futuresCancelAllOpenOrders: (payload: { symbol: string, recvWindow?: number }, agent?: Agent) => Promise<FCancelAllOrderResp>;
-        futuresCancelMultipleOrders: (payload: { symbol: string, orderIdList?: number[], origClientOrderIdList?: number[], recvWindow?: number }, agent?: Agent) => Promise<(FOrder | FCancelAllOrderResp)[]>;
-        futuresGetOpenOrder: (payload: { symbol: string, orderId?: number, origClientOrderId?: string, recvWindow?: number}, agent?: Agent) => Promise<FOrderState>;
+        futuresCancelMultipleOrders: (payload: { symbol: string, orderIdList?: string[], origClientOrderIdList?: string[], recvWindow?: number }, agent?: Agent) => Promise<(FOrder | FCancelAllOrderResp)[]>;
+        futuresGetOpenOrder: (payload: { symbol: string, orderId?: string, origClientOrderId?: string, recvWindow?: number}, agent?: Agent) => Promise<FOrderState>;
         futuresGetAllOpenOrders: (payload: { symbol?: string, recvWindow?: number }, agent?: Agent) => Promise<FOrderState[]>;
-        futuresGetAllOrders: (payload: { symbol: string, orderId?: number, startTime?: number, endTime?: number, limit?: number, recvWindow?: number }, agent?: Agent) => Promise<FOrderState[]>;
+        futuresGetAllOrders: (payload: { symbol: string, orderId?: string, startTime?: number, endTime?: number, limit?: number, recvWindow?: number }, agent?: Agent) => Promise<FOrderState[]>;
         futuresAccountBalance: (payload: { recvWindow?: number }, agent?: Agent) => Promise<FAccountBalance[]>;
         futuresAccountInfo: (payload: { recvWindow?: number }, agent?: Agent) => Promise<FAccountInfo>;
         futuresApiReferralIfNewUser: (payload: { recvWindow?: number, brokerId: string, type?: FuturesApiReferralType }, agent?: Agent) => Promise<FuturesApiReferralResponse>;
@@ -469,7 +469,7 @@ declare module 'binance-client' {
         futuresModifyPositionMargin: (payload: { symbol: string, amount: number, type: number, recvWindow?: number }, agent?: Agent) => Promise<FModifyPositionMarginResp>;
         futuresPositionMarginHistory: (payload: { symbol: string, type?: number, startTime?: number, endTime?: number, limit?: number, recvWindow?: number }, agent?: Agent) => Promise<FPositionMargin[]>;
         futuresPositionRisk: (payload: { recvWindow?: number }, agent?: Agent) => Promise<FPositionRisk[]>;
-        futuresUserTrades: (payload: { symbol: string, startTime?: number, endTime?: number, fromId?: number, limit?: number, recvWindow?: number }, agent?: Agent) => Promise<FUserTrade[]>;
+        futuresUserTrades: (payload: { symbol: string, startTime?: number, endTime?: number, fromId?: string, limit?: number, recvWindow?: number }, agent?: Agent) => Promise<FUserTrade[]>;
         futuresIncomeHistory: (payload: { symbol?: string, incomeType?: FIncomeType, startTime?: number, endTime?: number, limit?: number, revWindow?: number }, agent?: Agent) => Promise<FIncome[]>;
         futuresGetUserDataStream: (payload: {recvWindow?: number}, agent?: Agent) => Promise<{ listenKey: string}>;
         futuresKeepUserDataStream: (payload: {recvWindow?: number}, agent?: Agent) => Promise<{}>;
