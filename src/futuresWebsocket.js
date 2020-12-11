@@ -604,6 +604,9 @@ const user = opts => cb => {
     const ts = LosslessJSON.stringify(rest.e);
     if (type === 'listenKeyExpired' && lastExpiredTs !== ts) {
       lastExpiredTs = ts;
+      if (process.env.DEBUG_BINANCE_CLIENT) {
+        console.log(`ListenKey ${currentListenKey.subStr(0,4)} expired for user ${opts.apiKey.subStr(0, 12)}`);
+      }
       keepAlive(false);
       return;
     }
@@ -611,6 +614,9 @@ const user = opts => cb => {
   }
 
   const _futuresKeepUserDataStream = () => {
+    if (process.env.DEBUG_BINANCE_CLIENT) {
+      console.log(`Refreshing listenKey ${currentListenKey.subStr(0,4)} for user ${opts.apiKey.subStr(0, 12)}`);
+    }
     if (recvWindow) {
       return futuresKeepUserDataStream({ recvWindow })
     }
@@ -640,6 +646,7 @@ const user = opts => cb => {
 
   const closeStream = (options, catchErrors) => {
     clearInterval(int);
+    int = null;
 
     if (currentListenKey) {
       const p = _futuresCloseUserDataStream()
