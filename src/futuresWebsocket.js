@@ -597,10 +597,13 @@ const user = opts => cb => {
   let currentListenKey = null
   let int = null
   let w = null
+  let lastExpiredTs = null;
 
   const handleEvent = msg => {
     const { e: type, ...rest } = LosslessJSON.parse(msg.data)
-    if (type === 'listenKeyExpired') {
+    const ts = LosslessJSON.stringify(rest.e);
+    if (type === 'listenKeyExpired' && lastExpiredTs !== ts) {
+      lastExpiredTs = ts;
       keepAlive(false);
       return;
     }
@@ -616,7 +619,6 @@ const user = opts => cb => {
 
   const keepAlive = isReconnecting => {
     if (currentListenKey) {
-      clearInterval(int)
       _futuresKeepUserDataStream().catch(() => {
         closeStream({}, true)
 
@@ -637,9 +639,9 @@ const user = opts => cb => {
   }
 
   const closeStream = (options, catchErrors) => {
-    if (currentListenKey) {
-      clearInterval(int)
+    clearInterval(int);
 
+    if (currentListenKey) {
       const p = _futuresCloseUserDataStream()
 
       if (catchErrors) {
@@ -668,7 +670,7 @@ const user = opts => cb => {
         currentListenKey = listenKey
 
         if (!int) {
-          int = setInterval(() => keepAlive(false), 55 * 60 * 50e3)
+          int = setInterval(() => keepAlive(false), 10 * 60e3)
         }
         // TODO: think about using only listenKeyExpired
 
