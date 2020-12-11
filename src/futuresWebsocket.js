@@ -605,7 +605,7 @@ const user = opts => cb => {
     if (type === 'listenKeyExpired' && lastExpiredTs !== ts) {
       lastExpiredTs = ts;
       if (process.env.DEBUG_BINANCE_CLIENT) {
-        console.log(`ListenKey ${currentListenKey?.subStr(0,4)} expired for user ${opts.apiKey?.subStr(0, 12)}`);
+        console.log(`ListenKey ${currentListenKey && currentListenKey.subStr(0,4)} expired for user ${opts && opts.apiKey && opts.apiKey.subStr(0, 12)}`);
       }
       keepAlive(false);
       return;
@@ -615,7 +615,7 @@ const user = opts => cb => {
 
   const _futuresKeepUserDataStream = () => {
     if (process.env.DEBUG_BINANCE_CLIENT) {
-      console.log(`Refreshing listenKey ${currentListenKey?.subStr(0,4)} for user ${opts.apiKey?.subStr(0, 12)}`);
+      console.log(`Refreshing listenKey ${currentListenKey && currentListenKey.subStr(0,4)} for user ${opts && opts.apiKey && opts.apiKey.subStr(0, 12)}`);
     }
     if (recvWindow) {
       return futuresKeepUserDataStream({ recvWindow })
