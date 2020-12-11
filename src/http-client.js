@@ -29,7 +29,7 @@ const makeQueryString = q =>
 /**
  * Finalize API response
  */
-const sendResult = (call, {apiKey, path} = {}) =>
+const sendResult = (call, {apiKey, path, queryString} = {}) =>
   call.then(res => {
     if (process.env.DEBUG_BINANCE_CLIENT) {
       res.headers.forEach(function (v, k) {
@@ -72,7 +72,7 @@ const sendResult = (call, {apiKey, path} = {}) =>
       throw error
     })
   }).catch((err) => {
-    console.log(`Unexpected error in binance http client at ${path}, ${LosslessJSON.stringify(err.code)}`, err.message);
+    console.log(`Unexpected error in binance http client at ${path}?${queryString}, ${LosslessJSON.stringify(err.code)}`, err.message);
     throw err;
   })
 
@@ -184,18 +184,19 @@ const privateCall = ({ apiKey, apiSecret, base, apiPathBase, getTime = defaultGe
 
 
     const newData = noExtra ? data : { ...data, timestamp, signature }
+    const queryString = makeQueryString(newData);
 
     return sendResult(fetch(
       `${base}${(path.includes('/wapi') || path.includes('/sapi')) ? '' : `/${apiPathBase}`}${path}${noData
         ? ''
-        : makeQueryString(newData)}`,
+        : queryString}`,
       {
         method,
         headers: { 'X-MBX-APIKEY': apiKey },
         json: true,
         agent
       },
-    ), {apiKey, path});
+    ), {apiKey, path, queryString});
 
   })
 }
