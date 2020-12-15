@@ -432,12 +432,12 @@ export default opts => {
     futuresChangeMarginType: (payload, agent) => checkParams('futuresChangeMarginType', payload, ['symbol', 'marginType']) && futuresPrivCall({ path: '/v1/marginType', data: payload, method: 'POST', agent }),
     futuresModifyPositionMargin: (payload, agent) => checkParams('futuresModifyPositionMargin', payload, ['symbol', 'amount']) && futuresPrivCall({ path: '/v1/positionMargin', data: payload, method: 'POST', agent }),
     futuresPositionMarginHistory: (payload, agent) => checkParams('futuresPositionMarginHistory', payload, ['symbol']) && futuresPrivCall({ path: '/v1/positionMargin/history', data: payload, agent }),
-    futuresPositionRisk: (payload, agent) => futuresPrivCall({ path: '/v1/positionRisk', data: payload, agent }),
+    futuresPositionRisk: (payload, agent) => futuresPrivCall({ path: '/v2/positionRisk', data: payload, agent }),
     futuresUserTrades: (payload, agent) => checkParams('futuresUserTrades', payload, ['symbol']) && futuresPrivCall({ path: '/v1/userTrades', data: payload, agent }),
     futuresIncomeHistory: (payload, agent) => futuresPrivCall({ path: '/v1/income', data: payload, agent }),
     futuresGetUserDataStream: (payload, agent) => futuresPrivCall({ path: '/v1/listenKey', data: payload, method: 'POST', noData: true, agent }),
     futuresKeepUserDataStream: (payload, agent) => futuresPrivCall({ path: '/v1/listenKey', data: payload, method: 'PUT', noData: false, noExtraData: true, agent }),
-    futuresCloseUserDataStream: (payload, agent) => futuresPrivCall({ path: '/v1/listenKey', data: payload, method: 'DELETE', noData: false, noExtraData: true, agent })
+    futuresCloseUserDataStream: (payload, agent) => futuresPrivCall({ path: '/v1/listenKey', data: payload, method: 'DELETE', noData: false, noExtraData: true, agent }),
   }
 }
 

@@ -919,7 +919,8 @@ declare module 'binance-client' {
         maxNotionalValue: string, // notional value limit of current initial leverage
         positionAmt: string,      // Positive for long, negative for short
         symbol: string,
-        unRealizedProfit: string
+        unRealizedProfit: string;
+        positionSide: FPositionSide;
     }
 
     export interface FUserTrade {
