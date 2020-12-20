@@ -768,6 +768,7 @@ declare module 'binance-client' {
         priceRate: string,
         updateTime: number,
         workingType: FOrderWorkingType;
+        closePosition: true | false;
     }
 
     export type FNewOrder = {
@@ -783,11 +784,11 @@ declare module 'binance-client' {
         workingType?: FOrderWorkingType,
         recvWindow?: number
     } & ({
-        reduceOnly?: "true" | "false",
+        reduceOnly?: true | false,
         quantity: string,
     } | {
         type: Extract<FOrderType, 'STOP_MARKET' | 'TAKE_PROFIT_MARKET'>,
-        closePosition?: "true" | "false",
+        closePosition?: true | false,
     })
 
     export interface FOrderState {
