@@ -770,13 +770,11 @@ declare module 'binance-client' {
         workingType: FOrderWorkingType;
     }
 
-    export interface FNewOrder {
+    export type FNewOrder = {
         symbol: string,
         side: FOrderSide,
         type: FOrderType,
         timeInForce?: FTimeInForce,
-        quantity: string,
-        reduceOnly?: "true" | "false",
         price?: string,
         newClientOrderId?: string,
         stopPrice?: string,
@@ -784,7 +782,13 @@ declare module 'binance-client' {
         callbackRate?: number,
         workingType?: FOrderWorkingType,
         recvWindow?: number
-    }
+    } & ({
+        reduceOnly?: "true" | "false",
+        quantity: string,
+    } | {
+        type: Extract<FOrderType, 'STOP_MARKET' | 'TAKE_PROFIT_MARKET'>,
+        closePosition?: "true" | "false",
+    })
 
     export interface FOrderState {
         avgPrice: string,

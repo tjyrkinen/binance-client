@@ -299,7 +299,7 @@ const futuresOrder = (privCall, payload = {}, url, agent) => {
       'symbol',
       'side',
       'type',
-      'quantity',
+      ...(payload.closePosition ? [] : ['quantity']),
       ...((payload.type && payload.type === 'LIMIT' && ['price', 'timeInForce']) || []),
       ...((payload.type && ['STOP', 'TAKE_PROFIT'].includes(payload.type) && ['price', 'stopPrice']) || []),
       ...((payload.type && ['STOP_MARKET', 'TAKE_PROFIT_MARKET'].includes(payload.type) && ['stopPrice']) || []),
