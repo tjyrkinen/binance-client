@@ -786,9 +786,10 @@ declare module 'binance-client' {
     } & ({
         reduceOnly?: true | false,
         quantity: string,
+        closePosition: false,
     } | {
         type: Extract<FOrderType, 'STOP_MARKET' | 'TAKE_PROFIT_MARKET'>,
-        closePosition?: true | false,
+        closePosition: true,
     })
 
     export interface FOrderState {
