@@ -1080,6 +1080,7 @@ declare module 'binance-client' {
         eventTime: number,
         symbol: string,
         markPrice: string,
+        indexPrice: string,
         fundingRate: string,
         nextFundingTime: number
     }

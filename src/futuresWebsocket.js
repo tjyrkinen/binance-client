@@ -94,6 +94,7 @@ const markPrice = (payload, cb) => {
       E: eventTime,
       s: symbol,
       p: markPrice,
+      i: indexPrice,
       r: fundingRate,
       T: nextFundingTime
     } = LosslessJSON.parse(msg.data);
@@ -103,6 +104,7 @@ const markPrice = (payload, cb) => {
       eventTime,
       symbol,
       markPrice,
+      indexPrice,
       fundingRate,
       nextFundingTime
     });
@@ -126,6 +128,7 @@ const markPriceAll = (payload, cb) => {
         eventTime: d.E,
         symbol: d.s,
         markPrice: d.p,
+        indexPrice: d.i,
         fundingRate: d.r,
         nextFundingTime: d.T
       }));
