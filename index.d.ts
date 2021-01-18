@@ -325,6 +325,7 @@ declare module 'binance-client' {
         positionAmount: string,
         entryPrice: string,
         preAccumulatedRealizedFee: string,
+        upnl: string,
         marginType: string,
         isolatedWallet: string,
         positionSide: FPositionSide,

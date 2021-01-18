@@ -533,6 +533,7 @@ const userTransforms = {
           positionAmount: d.pa,
           entryPrice: d.ep,
           preAccumulatedRealizedFee: d.cr,
+          upnl: d.up,
           marginType: d.mt,
           isolatedWallet: d.iw,
           positionSide: d.ps
