@@ -365,9 +365,9 @@ export default opts => {
     depositAddress: (payload, agent) => privCall({ path: '/wapi/v3/depositAddress.html', data: payload, method: 'GET', agent }),
     tradeFee: (payload, agent) => privCall({ path: '/wapi/v3/tradeFee.html', data: payload, method: 'GET', agent }).then(res => res.tradeFee),
     assetDetail: (payload, agent) => privCall({ path: '/wapi/v3/assetDetail.html', data: payload, method: 'GET', agent }),
-    getDataStream: (agent) => privCall({ path: '/v1/userDataStream', data: null, method: 'POST', noData: true, agent }),
-    keepDataStream: (payload, agent) => privCall({ path: '/v1/userDataStream', data: payload, method: 'PUT', noData: false, noExtraData: true, agent }),
-    closeDataStream: (payload, agent) => privCall({ path: '/v1/userDataStream', data: payload, method: 'DELETE', noData: false, noExtraData: true, agent }),
+    getDataStream: (agent) => privCall({ path: '/v3/userDataStream', data: null, method: 'POST', noData: true, agent }),
+    keepDataStream: (payload, agent) => privCall({ path: '/v3/userDataStream', data: payload, method: 'PUT', noData: false, noExtraData: true, agent }),
+    closeDataStream: (payload, agent) => privCall({ path: '/v3/userDataStream', data: payload, method: 'DELETE', noData: false, noExtraData: true, agent }),
 
     // ______________________________________ futures binance api
 
