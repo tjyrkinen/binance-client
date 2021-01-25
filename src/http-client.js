@@ -162,7 +162,7 @@ const privateCall = ({ apiKey, apiSecret, base, apiPathBase, getTime = defaultGe
     data = {},
     method = 'GET',
     noData,
-    noExtra,
+    noExtraData,
     agent
 }) => {
   if (!apiKey || !apiSecret) {
@@ -183,7 +183,7 @@ const privateCall = ({ apiKey, apiSecret, base, apiPathBase, getTime = defaultGe
       .digest('hex')
 
 
-    const newData = noExtra ? data : { ...data, timestamp, signature }
+    const newData = noExtraData ? data : { ...data, timestamp, signature }
     const queryString = makeQueryString(newData);
 
     return sendResult(fetch(
@@ -314,7 +314,7 @@ export default opts => {
   const base = opts && opts.httpBase || BASE;
   const futureBase = opts && opts.httpFutureBase || FUTURE_BASE;
   const pubCall = publicCall({ ...opts, base, apiPathBase: API_PATH_BASE })
-  const privCall = privateCall({ ...opts, base, pubCall })
+  const privCall = privateCall({ ...opts, base, apiPathBase: API_PATH_BASE, pubCall })
   const kCall = keyCall({ ...opts, pubCall })
   const futuresPubCall = publicCall({ ...opts, base: futureBase, apiPathBase: FUTURES_API_PATH_BASE });
   const futuresPrivCall = privateCall({ ...opts, base: futureBase, apiPathBase: FUTURES_API_PATH_BASE, pubCall: futuresPubCall });
