@@ -375,7 +375,11 @@ declare module 'binance-client' {
         stopPriceType: string // TODO: type
     }
 
-
+    export interface SpotApiReferralResponse {
+        apiAgentCode: string;
+        rebateWorking: boolean;
+        ifNewUser: boolean;
+    }
 
     export enum FuturesApiReferralType {
         USDT = 1,
@@ -429,6 +433,7 @@ declare module 'binance-client' {
         assetDetail(agent?: Agent): Promise<AssetDetail>;
         withdrawHistory(options: { asset: string, status?: number, startTime?: number, endTime?: number }, agent?: Agent): Promise<WithdrawHistoryResponse>;
         depositHistory(options: { asset: string, status?: number, startTime?: number, endTime?: number }, agent?: Agent): Promise<DepositHistoryResponse>;
+        spotApiReferralIfNewUser: (payload: { recvWindow?: number, apiAgentCode: string }, agent?: Agent) => Promise<SpotApiReferralResponse>;
 
         // _____________________________________ Binance futures
         futuresPing: (agent?: Agent) => Promise<true>;
