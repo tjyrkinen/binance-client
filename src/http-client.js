@@ -368,6 +368,7 @@ export default opts => {
     getDataStream: (agent) => privCall({ path: '/v3/userDataStream', data: null, method: 'POST', noData: true, agent }),
     keepDataStream: (payload, agent) => privCall({ path: '/v3/userDataStream', data: payload, method: 'PUT', noData: false, noExtraData: true, agent }),
     closeDataStream: (payload, agent) => privCall({ path: '/v3/userDataStream', data: payload, method: 'DELETE', noData: false, noExtraData: true, agent }),
+    spotApiReferralIfNewUser: (payload, agent) => privCall({ path: '/sapi/v1/apiReferral/ifNewUser', data: payload, agent }),
 
     // ______________________________________ futures binance api
 
