@@ -15,16 +15,21 @@ const unlossless = (v) => typeof v === 'object' && v.type === 'LosslessNumber' ?
 /**
  * Build query string for uri encoded url based on json object
  */
-const makeQueryString = q =>
-  q
+const makeQueryString = (q, encode=true) => {
+  return q
     ? `?${Object.keys(q)
         .filter(k => !!q[k])
         .map(k => {
           const v = Array.isArray(q[k]) ? `[${q[k].map(unlossless).join(',')}]` : q[k];
-          return `${encodeURIComponent(k)}=${encodeURIComponent(unlossless(v))}`
+          if (encode) {
+            return `${encodeURIComponent(k)}=${encodeURIComponent(unlossless(v))}`
+          } else {
+            return `${k}=${unlossless(v)}`
+          }
         } )
         .join('&')}`
     : ''
+}
 
 /**
  * Finalize API response
@@ -184,20 +189,19 @@ const privateCall = ({ apiKey, apiSecret, base, apiPathBase, getTime = defaultGe
 
 
     const newData = noExtraData ? data : { ...data, timestamp, signature }
-    const queryString = makeQueryString(newData);
+    const paramString = noData ? '' : makeQueryString(newData, false).substr(1);
+    // Send GET request with query parameters, everything else with params in request body
+    const [queryString, body, contentType] = method === 'GET' ? [`?${paramString}`, undefined, undefined] : ['', paramString, 'application/x-www-form-urlencoded'];
+    const fullUrl = `${base}${(path.includes('/wapi') || path.includes('/sapi')) ? '' : `/${apiPathBase}`}${path}${queryString}`;
 
-    return sendResult(fetch(
-      `${base}${(path.includes('/wapi') || path.includes('/sapi')) ? '' : `/${apiPathBase}`}${path}${noData
-        ? ''
-        : queryString}`,
-      {
+    return sendResult(fetch(fullUrl, {
         method,
-        headers: { 'X-MBX-APIKEY': apiKey },
+        headers: { 'X-MBX-APIKEY': apiKey, 'Content-Type': contentType },
         json: true,
+        body,
         agent
       },
     ), {apiKey, path, queryString});
-
   })
 }
 
